@@ -93,6 +93,14 @@ class Grafo:
 
 	def marcarVertice(self, vertice):
 		self.grafo[vertice].marcado = True
+	
+	def visitarVertice(self, v):
+		self.grafo[v].visitado = True
+
+	def marcarTodosVertices(self):
+		for v in self.grafo:
+			self.grafo[v].visitado = True
+			self.grafo[v].marcado = True
 
 	# Retorna a ordem do grafo (numero de vertices)
 	def ordem(self):
