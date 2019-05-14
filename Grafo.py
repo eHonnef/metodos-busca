@@ -188,7 +188,7 @@ class Grafo:
 
 	# Verifica se o grafo eh uma arvore
 	def arvore(self):
-		return self.conexo() and not self.buscaCiclo(self.verticeAleatorio().nome)
+		return self.conexo() and not self.buscaCiclo()
 
 	# Limpa as marcacoes no vertice, define os atributos marcado e visitado do vertice como falso
 	def limpaVertices(self):
@@ -235,6 +235,12 @@ class Grafo:
 		if self.buscaCiclo():
 			return []
 		return [v for v in graph if not self.grauEntradaG(graph, v)]
+	
+	def buscaProfundidade(self):
+		pass
+	
+	def buscaLargura(self):
+		pass
 
 #######################################################################################
 # Classe vertice
