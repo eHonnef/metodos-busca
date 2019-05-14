@@ -71,8 +71,12 @@ for row in range(matrix.shape[0]):
 grafo = Grafo.Grafo(vertices)
 
 b = Busca.Busca(grafo, matrix.shape[0])
-b.buscaProfundidade("0.0")
+# b.buscaProfundidade("0.0")
+b.buscaLargura("0.0")
+
 print(b._movimento)
 print(b._ouroEncontrado)
 print(b._pontuacao)
 print(len(b._movimento))
+
+b.limparGrafo()
