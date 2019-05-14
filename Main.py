@@ -3,6 +3,7 @@ import random
 import pandas as pd
 import numpy as np
 from copy import deepcopy, copy
+import Busca
 
 # Criando o grafo e arestas
 file = pd.read_csv("entrada.txt", skiprows=1, delimiter='\t', header=None).applymap(str)
@@ -65,8 +66,12 @@ for row in range(matrix.shape[0]):
 
     vertices.append(
       Grafo.Vertice(str(row) + "." + str(col), arestas,
-      {"conteudo":value}))
+      {"conteudo":value, "row":row, "col":col}))
 
 grafo = Grafo.Grafo(vertices)
 
-print(grafo.adjacentes("6.5"))
+b = Busca.Busca(grafo, matrix.shape[0])
+b.buscaProfundidade("0.0")
+print(b._movimento)
+print(b._ouroEncontrado)
+print(b._pontuacao)

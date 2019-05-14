@@ -108,14 +108,14 @@ class Grafo:
 
 	# Retorna o objeto vertice dado o nome do vertice
 	# Parametro nome: eh o nome do objeto Vertice que se deseja
-	def umVertice(self, nome):
+	def vertice(self, nome):
 		return self.grafo[nome]
 
 	# Retorna um objeto vertice aleatorio
 	def verticeAleatorio(self):
 		return self.grafo[random.choice(list(self.grafo.keys()))]
 
-	# Retorna uma lista dos adjacentes do vertice
+	# Retorna uma lista contendo o nome dos vertices adjacentes do vertice dado
 	# Parametro nome: eh o nome do vertice que se desejam os adjacentes
 	def adjacentes(self, nome):
 		return self.grafo[nome].arestas
@@ -236,11 +236,6 @@ class Grafo:
 			return []
 		return [v for v in graph if not self.grauEntradaG(graph, v)]
 	
-	def buscaProfundidade(self):
-		pass
-	
-	def buscaLargura(self):
-		pass
 
 #######################################################################################
 # Classe vertice
