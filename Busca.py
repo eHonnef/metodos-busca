@@ -9,15 +9,16 @@ class Busca:
     if not isinstance(grafo, Grafo.Grafo):
       raise ValueError("O grafo não é uma instância de Grafo.")
     
-    self._size = size
     self._grafo = grafo
-    self._pontuacao = int(size**1.5)
-    self._nOuro = int(size/2)
-    self._movimento = list()
-    self._ouroEncontrado = list()
+    self._size = size
+    self.limparGrafo()
   
   def limparGrafo(self):
     self._grafo.limpaVertices()
+    self._pontuacao = int(self._size**1.5)
+    self._nOuro = int(self._size/2)
+    self._movimento = list()
+    self._ouroEncontrado = list()
   
   def buscaProfundidade(self, v):
     if self._pontuacao == 0:
