@@ -1,4 +1,4 @@
-import Grafo
+from Grafo import Grafo, Vertice, Aresta
 import random
 import pandas as pd
 import numpy as np
@@ -14,18 +14,9 @@ file = pd.read_csv("entrada.txt", skiprows=1, delimiter='\t', header=None).apply
 
 
 matrix = np.array(file)
-
-# Cantos = (0,0), (0,n), (n,0), (n,n)
-# Laterais = (col > 0 && col < n && (row == 0 || row == n)) || 
-# (row > 0 && row < n && (col == 0 || col == n))
-
 print(matrix)
 print("\n\n")
 
-# 0 = livre
-# 1 = parede
-# 2 = ouro
-value = 0
 
 def checkValue(row, col):
   if row >= matrix.shape[0] or row < 0:
@@ -41,42 +32,74 @@ def checkValue(row, col):
   else:
     return True
 
-vertices = []
-arestas = []
+
+grafo = Grafo()
+
+def adicionaVertice(row, col):
+  # 0 = livre
+  # 1 = parede
+  # 2 = ouro
+  value = 0
+
+  if matrix[row][col] == "0":
+    value = 0
+  elif matrix[row][col] == "1":
+    # Se for parede nem adiciona vertice
+    value = 1
+    return None
+  else:
+    value = 2
+  
+  if not grafo.verticeExiste(str(row) + "." + str(col)):
+    v = Vertice(str(row) + "." + str(col), {"conteudo":value, "row":row, "col":col})
+    grafo.adicionaVertice(v)
+    return v
+  else:
+    return grafo.vertice(str(row) + "." + str(col))
+  
+
 for row in range(matrix.shape[0]):
   for col in range(matrix.shape[1]):
-    arestas = [] 
-    if matrix[row][col] == "0":
-      value = 0
-    elif matrix[row][col] == "1":
-      # Se for parede nem adiciona vertice
-      value = 1
+    v = adicionaVertice(row, col)
+    if v == None:
       continue
-    else:
-      value = 2
 
     if checkValue(row, col-1):
-      arestas.append(str(row) + "." + str(col-1))
+      if not grafo.verticeExiste(str(row) + "." + str(col-1)):
+        adicionaVertice(row, col-1)
+      grafo.conecta(v.nome, str(row) + "." + str(col-1))
     if checkValue(row, col+1):
-      arestas.append(str(row) + "." + str(col+1))
+      if not grafo.verticeExiste(str(row) + "." + str(col+1)):
+        adicionaVertice(row, col+1)
+      grafo.conecta(v.nome, str(row) + "." + str(col+1))
     if checkValue(row-1, col):
-      arestas.append(str(row-1) + "." + str(col))
+      if not grafo.verticeExiste(str(row-1) + "." + str(col)):
+        adicionaVertice(row-1, col)
+      grafo.conecta(v.nome, str(row-1) + "." + str(col))
     if checkValue(row+1, col):
-      arestas.append(str(row+1) + "." + str(col))
+      if not grafo.verticeExiste(str(row+1) + "." + str(col)):
+        adicionaVertice(row+1, col)
+      grafo.conecta(v.nome, str(row+1) + "." + str(col))
 
-    vertices.append(
-      Grafo.Vertice(str(row) + "." + str(col), arestas,
-      {"conteudo":value, "row":row, "col":col}))
 
-grafo = Grafo.Grafo(vertices)
+# for v in grafo.grafo:
+#   print(v)
+#   print(grafo.adjacentes(v))
 
-b = Busca.Busca(grafo, matrix.shape[0])
-# b.buscaProfundidade("0.0")
-b.buscaLargura("0.0")
+grafo.arvore()
 
-print(b._movimento)
-print(b._ouroEncontrado)
-print(b._pontuacao)
-print(len(b._movimento))
+for v in grafo.grafo:
+  print(v)
+  print(grafo.adjacentes(v))
 
-b.limparGrafo()
+
+# b = Busca.Busca(grafo, matrix.shape[0])
+# # b.buscaProfundidade("0.0")
+# b.buscaLargura("0.0")
+
+# print(b._movimento)
+# print(b._ouroEncontrado)
+# print(b._pontuacao)
+# print(len(b._movimento))
+
+# b.limparGrafo()

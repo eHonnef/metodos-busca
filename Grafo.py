@@ -1,6 +1,6 @@
 import random
 
-# Classe grafo (nao direcional)
+# Classe grafo (direcional)
 class Grafo:
 	# Em python, dicionarios sao naturalmente uma hash table
 	# Dicionario que contem uma lista de objetos do tipo Vertice
@@ -8,11 +8,15 @@ class Grafo:
 
 	# Estrutura auxiliar que serve para salvar o grafo
 	_grafo_ = {}
+	_arestas_ = []
 
 	# Construtor da classe Grafo
 	# Parameto vertices deve ser uma lista de objetos da classe Vertice
 	def __init__(self):
 		self.arestas = []
+
+	def verticeExiste(self, v):
+		return v in self.grafo
 
 	# Retorna o grau de entrada de um vertice
 	# Parametro vertice: Eh o vertice que se deseja saber o grau de entrada
@@ -34,25 +38,29 @@ class Grafo:
 
 	# Duplica o grafo (python usa ponteiros e referencias, eh complicado copiar objetos)
 	def salvarGrafo(self):
+		self._arestas_ = self.arestas.copy()
 		self._grafo_ = self.grafo.copy()
 
 	# Restaura o grafo
 	def restaurarGrafo(self):
+		self.arestas = self._arestas_.copy()
 		self.grafo = self._grafo_.copy()
+		for a in self.arestas:
+			self.conecta(a.vs[0], a.vs[1])
 
 	# Remove um vertice do grafo junto com suas conexoes
-	# Parametro nome: Eh o nome do vertice
-	def removeVertice(self, nome):
-		if nome not in self.grafo:
+	# Parametro vertice: Eh o nome do vertice
+	def removeVertice(self, vertice):
+		if vertice not in self.grafo:
 			return False
 
-		del self.grafo[nome]
+		del self.grafo[vertice]
 
 		for a in self.arestas:
-			if nome in a.vs: self.arestas.remove(a)
+			if vertice in a.vs: self.arestas.remove(a)
 		
 		for v in self.grafo:
-			if nome in self.grafo[v].adjacentes: self.grafo[v].adjacentes.remove(a)
+			if vertice in self.grafo[v].adjacentes: self.grafo[v].adjacentes.remove(a)
 
 		return True
 
@@ -60,16 +68,20 @@ class Grafo:
 	# Parametro v0: eh o nome do vertice 1
 	# Parametro v1: eh o nome do vertice 2
 	def conecta(self, v0, v1):
-		if (v0 not in self.grafo) or (v1 not in self.grafo):
-			return False
-
+		add = True
 		for a in self.arestas:
-			if v0 in a.vs or v1 in a.vs:
-				return False
+			if v0 in a.vs and v1 in a.vs:
+				add = False
+				break
 
-		self.arestas.append(Aresta(v0, v1))
-		self.grafo[v0].adjacentes.append(v1)
-		self.grafo[v1].adjacentes.append(v0)
+		if add:
+			self.arestas.append(Aresta(v0, v1))
+
+		if v1 not in self.grafo[v0].adjacentes:
+			self.grafo[v0].adjacentes.append(v1)
+		
+		if v0 not in self.grafo[v1].adjacentes:
+			self.grafo[v1].adjacentes.append(v0)
 
 		return True
 
@@ -148,29 +160,46 @@ class Grafo:
 	# Verifica se ha algum ciclo no grafo
 	def buscaCiclo(self):
 		for v in self.grafo:
-			if self._haCicloCom(v):
-				return True
-		return False
-
-	# Verifica se ha ciclos que o vertice "nome" faz parte
-	# Parametro nome: eh o nome do vertice inicial
-	# Parametro vAnt (default ""): opcional, eh o vertice anterior da busca, serve para o tracking da recursao
-	# Parametro visitados (default [], lista vazia): opcional, eh uma lista de vertices que ja foram utilizados, serve para o tracking de informacoes da recursao
-	def _haCicloCom(self, nome, vAnt = "", visitados = []):
-		if nome in visitados:
-			return True
-
-		visitados.append(nome)
-		for vAdj in self.adjacentes(nome):
-			if vAdj != vAnt and vAdj != nome:
-				if self._haCicloCom(vAdj, nome, visitados):
+			if not self.grafo[v].visitado:
+				if self._buscaCiclo(v):
+					self.limpaVertices()
 					return True
-		visitados.remove(nome)
+		
+		self.limpaVertices()
 		return False
+
+	def _buscaCiclo(self, v, parent = ""):
+		self.grafo[v].visitado = True
+
+		for adj in self.adjacentes(v):
+			if not self.grafo[adj].visitado:
+				if self._buscaCiclo(adj, v):
+					return True
+			elif parent != adj:
+				return True
+		
+		return False
+		
 
 	# Verifica se o grafo eh uma arvore
-	def arvore(self):
+	def isArvore(self):
 		return self.conexo() and not self.buscaCiclo()
+	
+	# Transforma o grafo em uma MST usando kruskal
+	def _desconetaTodos(self):
+		for v in self.grafo:
+			self.grafo[v].adjacentes.clear()
+		self.arestas.clear()
+
+	def arvore(self):
+		self.salvarGrafo()
+		ar = list(self.arestas)
+		self._desconetaTodos()
+
+		for a in ar:
+			self.conecta(a.vs[0], a.vs[1])
+			if self.buscaCiclo():
+				self.desconecta(a.vs[0], a.vs[1])
 
 	# Limpa as marcacoes no vertice, define os atributos marcado e visitado do vertice como falso
 	def limpaVertices(self):
@@ -194,18 +223,7 @@ class Vertice:
 		self.dados = dict(dados)
 		self.visitado = False
 		self.marcado = False
-	
-	# def adicionaAresta(self, v, peso = 0):
-	# 	a = Aresta(self, v)
-	# 	self.arestas.append(a)
-	# 	a.setPeso(peso)
-	# 	return a
-	
-	# def arestaExiste(self, v):
-	# 	for a in self.arestas:
-	# 		if a.v1 == v:
-	# 			return True
-	# 	return False
+
 #######################################################################################
 # Classe aresta
 class Aresta:
