@@ -3,7 +3,7 @@ import random
 import pandas as pd
 import numpy as np
 from copy import deepcopy, copy
-import Busca
+from Busca import Busca
 
 # Criando o grafo e arestas
 file = pd.read_csv("entrada.txt", skiprows=1, delimiter='\t', header=None).applymap(str)
@@ -82,24 +82,19 @@ for row in range(matrix.shape[0]):
       grafo.conecta(v.nome, str(row+1) + "." + str(col))
 
 
-# for v in grafo.grafo:
-#   print(v)
-#   print(grafo.adjacentes(v))
-
+# Transforma grafo em uma MST
 grafo.arvore()
 
-for v in grafo.grafo:
-  print(v)
-  print(grafo.adjacentes(v))
+# Checa se é uma árvore
+print(grafo.isArvore())
 
+b = Busca(grafo, matrix.shape[0])
+# b.buscaProfundidade("0.0")
+b.buscaLargura("0.0")
 
-# b = Busca.Busca(grafo, matrix.shape[0])
-# # b.buscaProfundidade("0.0")
-# b.buscaLargura("0.0")
+print(b._movimento)
+print(b._ouroEncontrado)
+print(b._pontuacao)
+print(len(b._movimento))
 
-# print(b._movimento)
-# print(b._ouroEncontrado)
-# print(b._pontuacao)
-# print(len(b._movimento))
-
-# b.limparGrafo()
+b.limpar()

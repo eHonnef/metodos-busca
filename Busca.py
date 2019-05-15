@@ -11,9 +11,9 @@ class Busca:
     
     self._grafo = grafo
     self._size = size
-    self.limparGrafo()
+    self.limpar()
   
-  def limparGrafo(self):
+  def limpar(self):
     self._grafo.limpaVertices()
     self._pontuacao = int(self._size**1.5)
     self._nOuro = int(self._size/2)
