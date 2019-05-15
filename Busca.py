@@ -20,7 +20,12 @@ class Busca:
     self._movimento = list()
     self._ouroEncontrado = list()
   
-  def buscaProfundidade(self, v):
+  def buscaProfundidade(self, limite):
+    self._buscaProfundidade("0.0", limite = limite)
+    self._grafo.limpaVertices()
+  
+  # -1 significa que é sem limite
+  def _buscaProfundidade(self, v, limite = -1, d = 1):
     if self._pontuacao == 0:
      return "Morto"
 
@@ -36,11 +41,14 @@ class Busca:
       if g.vertice(adjacente).marcado:
         continue
 
-      self.realizaMovimentoIda(v, adjacente)
-      self.buscaProfundidade(adjacente)
+      if limite == -1 or d <= limite:
+        d += 1
+        self.realizaMovimentoIda(v, adjacente)
+        self._buscaProfundidade(adjacente, limite, d)
+        d -= 1
 
-      # Quando volta da recursao ele volta pro nodo
-      self.realizaMovimentoVolta(v, adjacente)
+        # Quando volta da recursao ele volta pro nodo
+        self.realizaMovimentoVolta(v, adjacente)
       
   
   def voltarInicio(self):

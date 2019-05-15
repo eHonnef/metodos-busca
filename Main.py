@@ -88,13 +88,15 @@ grafo.arvore()
 # Checa se é uma árvore
 print(grafo.isArvore())
 
+print(grafo.maxDepth("0.0"))
+
 b = Busca(grafo, matrix.shape[0])
-# b.buscaProfundidade("0.0")
-b.buscaLargura("0.0")
+b.buscaProfundidade(grafo.maxDepth("0.0"))
+# b.buscaLargura("0.0")
 
 print(b._movimento)
 print(b._ouroEncontrado)
 print(b._pontuacao)
 print(len(b._movimento))
 
-b.limpar()
+# b.limpar()

@@ -54,14 +54,13 @@ class Grafo:
 		if vertice not in self.grafo:
 			return False
 
-		del self.grafo[vertice]
-
 		for a in self.arestas:
 			if vertice in a.vs: self.arestas.remove(a)
 		
 		for v in self.grafo:
-			if vertice in self.grafo[v].adjacentes: self.grafo[v].adjacentes.remove(a)
+			if vertice in self.grafo[v].adjacentes: self.grafo[v].adjacentes.remove(vertice)
 
+		del self.grafo[vertice]
 		return True
 
 	# Conecta dois vertices dado os nomes
@@ -200,6 +199,38 @@ class Grafo:
 			self.conecta(a.vs[0], a.vs[1])
 			if self.buscaCiclo():
 				self.desconecta(a.vs[0], a.vs[1])
+	
+	def maxDepth(self, root):
+		if not self.isArvore():
+			return -1
+		
+		self.salvarGrafo()
+		folhas = []
+		d = 0
+
+		while len(self.grafo) > 0:
+			self._maxDepth(root, root, folhas)
+			if not folhas:
+				break
+
+			for f in folhas:
+				self.removeVertice(f)
+			d += 1
+			
+			self.limpaVertices()
+			folhas.clear()
+		
+		self.restaurarGrafo()
+		return d
+	
+	def _maxDepth(self, root, v, folhas = []):
+		self.grafo[v].visitado = True
+		if len(self.adjacentes(v)) < 2 and v != root:
+			folhas.append(v)
+		
+		for adj in self.adjacentes(v):
+			if not self.grafo[adj].visitado:
+				self._maxDepth(root, adj, folhas)
 
 	# Limpa as marcacoes no vertice, define os atributos marcado e visitado do vertice como falso
 	def limpaVertices(self):
