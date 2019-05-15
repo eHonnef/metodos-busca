@@ -1,6 +1,6 @@
 import random
 
-# Classe grafo
+# Classe grafo (nao direcional)
 class Grafo:
 	# Em python, dicionarios sao naturalmente uma hash table
 	# Dicionario que contem uma lista de objetos do tipo Vertice
@@ -13,7 +13,6 @@ class Grafo:
 	# Parameto vertices deve ser uma lista de objetos da classe Vertice
 	def __init__(self):
 		self.arestas = []
-		pass
 
 	# Retorna o grau de entrada de um vertice
 	# Parametro vertice: Eh o vertice que se deseja saber o grau de entrada
@@ -34,7 +33,7 @@ class Grafo:
 		return True
 
 	# Duplica o grafo (python usa ponteiros e referencias, eh complicado copiar objetos)
-	def duplicarGrafo(self):
+	def salvarGrafo(self):
 		self._grafo_ = self.grafo.copy()
 
 	# Restaura o grafo
@@ -49,34 +48,46 @@ class Grafo:
 
 		del self.grafo[nome]
 
+		for a in self.arestas:
+			if nome in a.vs: self.arestas.remove(a)
+		
 		for v in self.grafo:
-			if nome in self.grafo[v].arestas: self.grafo[v].arestas.remove(nome)
+			if nome in self.grafo[v].adjacentes: self.grafo[v].adjacentes.remove(a)
 
 		return True
 
 	# Conecta dois vertices dado os nomes
-	# Parametro v1: eh o nome do vertice 1
-	# Parametro v2: eh o nome do vertice 2
-	def conecta(self, v1, v2):
-		if (v1 not in self.grafo) or (v2 not in self.grafo):
+	# Parametro v0: eh o nome do vertice 1
+	# Parametro v1: eh o nome do vertice 2
+	def conecta(self, v0, v1):
+		if (v0 not in self.grafo) or (v1 not in self.grafo):
 			return False
-		
-		if not self.grafo[v1].arestaExiste(v2): self.arestas(self.grafo[v1].adicionaAresta(v2))
-		if not self.grafo[v2].arestaExiste(v1): self.arestas(self.grafo[v2].adicionaAresta(v1))
+
+		for a in self.arestas:
+			if v0 in a.vs or v1 in a.vs:
+				return False
+
+		self.arestas.append(Aresta(v0, v1))
+		self.grafo[v0].adjacentes.append(v1)
+		self.grafo[v1].adjacentes.append(v0)
 
 		return True
 
 	# Desconecta dois vertices dado os nomes
 	# Parametro v1: eh o nome do vertice 1
 	# Parametro v2: eh o nome do vertice 2
-	def desconecta(self, v1, v2):
-		if (v1 not in self.grafo) or (v2 not in self.grafo):
+	def desconecta(self, v0, v1):
+		if (v0 not in self.grafo) or (v1 not in self.grafo):
 			return False
 
-		if v1 in self.grafo[v2].arestas: self.grafo[v2].arestas.remove(v1)
-		if v2 in self.grafo[v1].arestas: self.grafo[v1].arestas.remove(v2)
+		for a in self.arestas:
+			if v0 in a.vs and v1 in a.vs:
+				self.grafo[v0].adjacentes.remove(v1)
+				self.grafo[v1].adjacentes.remove(v0)
+				self.arestas.remove(a)
+				return True
 
-		return True
+		return False
 
 	def marcarVertice(self, vertice):
 		self.grafo[vertice].marcado = True
@@ -113,12 +124,12 @@ class Grafo:
 	# Retorna uma lista contendo o nome dos vertices adjacentes do vertice dado
 	# Parametro nome: eh o nome do vertice que se desejam os adjacentes
 	def adjacentes(self, nome):
-		return self.grafo[nome].arestas
+		return self.grafo[nome].adjacentes
 
 	# Retorna o grau do vertice
 	# Parametro nome: eh o nome do vertice que se deseja o grau
 	def grau(self, nome):
-		return len(self.grafo[nome].arestas)
+		return len(self.grafo[nome].adjacentes)
 
 	# Retorna o fecho transitivo de um vertice
 	# Parametro nome: eh o nome do vertice que se deseja encontrar o fecho transitivo
@@ -152,7 +163,7 @@ class Grafo:
 		visitados.append(nome)
 		for vAdj in self.adjacentes(nome):
 			if vAdj != vAnt and vAdj != nome:
-				if self.haCicloCom(vAdj, nome, visitados):
+				if self._haCicloCom(vAdj, nome, visitados):
 					return True
 		visitados.remove(nome)
 		return False
@@ -179,28 +190,27 @@ class Vertice:
 			raise ValueError("Nome esta em branco, por favor de um nome para o coitado")
 
 		self.nome = str(nome)
-		self.arestas = list()
+		self.adjacentes = list()
 		self.dados = dict(dados)
 		self.visitado = False
 		self.marcado = False
 	
-	def adicionaAresta(self, v, peso = 0):
-		a = Aresta(self, v)
-		self.arestas.append(a)
-		a.setPeso(peso)
-		return a
+	# def adicionaAresta(self, v, peso = 0):
+	# 	a = Aresta(self, v)
+	# 	self.arestas.append(a)
+	# 	a.setPeso(peso)
+	# 	return a
 	
-	def arestaExiste(self, v):
-		for a in self.arestas:
-			if a.v1 == v:
-				return True
-		return False
+	# def arestaExiste(self, v):
+	# 	for a in self.arestas:
+	# 		if a.v1 == v:
+	# 			return True
+	# 	return False
 #######################################################################################
 # Classe aresta
 class Aresta:
 	def __init__(self, v0, v1):
-		self.v0 = v0
-		self.v1 = v1
+		self.vs = [v0, v1]
 	
 	def setPeso(self, valor):
 		self.peso = valor
