@@ -171,7 +171,7 @@ class Busca:
         self._grafo.vertice(adj).dados["linhaReta"].values())
 
   def hAll(self, w, adj):
-    return sum(self._grafo.vertice(w).dados["linhaReta"].values()) >= sum(
+    return sum(self._grafo.vertice(w).dados["linhaReta"].values()) > sum(
         self._grafo.vertice(adj).dados["linhaReta"].values())
 
   # Selecionando o nodo de acordo com uma heuristica
