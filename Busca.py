@@ -32,7 +32,8 @@ class Busca:
       self._movimento.append("PO->" + v)
 
       for w in self._grafo.nomeVertices():
-        del self._grafo.vertice(w).dados["linhaReta"][v]
+        if v in self._grafo.vertice(w).dados["linhaReta"]:
+          del self._grafo.vertice(w).dados["linhaReta"][v]
 
     return self._nOuro == 0
   
@@ -67,7 +68,10 @@ class Busca:
 
     self._pontuacao -= 1
 
-  
+  def BuscaProfundidade(self, v):
+    self._buscaProfundidade(v)
+    self._grafo.limpaVertices()
+
   def buscaProfundidade(self, limite):
     self._buscaProfundidade("0.0", limite = limite)
     self._grafo.limpaVertices()

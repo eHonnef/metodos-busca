@@ -6,7 +6,7 @@ from copy import deepcopy, copy
 from Busca import Busca
 
 # Criando o grafo e arestas
-file = pd.read_csv("entrada.txt", skiprows=1, delimiter='\t', header=None).applymap(str)
+file = pd.read_csv("entrada64.txt", skiprows=1, delimiter='\t', header=None).applymap(str)
 
 # matrixSize = int(file.readline(1).strip())
 
@@ -89,24 +89,30 @@ for row in range(matrix.shape[0]):
       ar = grafo.conecta(v.nome, str(row+1) + "." + str(col))
       ar.setPeso(1)
 
-# print(grafo.shortestPath("0.0", "6.5"))
-# Transforma grafo em uma MST
+def busca(busca, metodo):
+  grafo.salvarGrafo()
+  metodo("0.0")
+  # print(busca._movimento)
+  print(busca._ouroEncontrado)
+  print(busca._pontuacao)
+  print(len(busca._movimento))
+  grafo.restaurarGrafo()
+  busca.limpar()
 
-# # Checa se é uma árvore
-# print(grafo.isArvore())
-
-# print(grafo.maxDepth("0.0"))
-
+print(ouro)
+print("\n\n")
 b = Busca(grafo, matrix.shape[0])
 b.linhaReta(ouro)
-b.bestFirst("0.0")
-# b.buscaProfundidade(grafo.maxDepth("0.0"))
+busca(b, b.bestFirst)
+busca(b, b.BuscaProfundidade)
+busca(b, b.buscaLargura)
+
+# b.bestFirst("0.0")
 # b.buscaProfundidade(-1)
 # b.buscaLargura("0.0")
 
-print(b._movimento)
-print(b._ouroEncontrado)
-print(b._pontuacao)
-print(len(b._movimento))
+
+# b.buscaProfundidade(grafo.maxDepth("0.0"))
+
 
 # b.limpar()
