@@ -67,36 +67,41 @@ for row in range(matrix.shape[0]):
     if checkValue(row, col-1):
       if not grafo.verticeExiste(str(row) + "." + str(col-1)):
         adicionaVertice(row, col-1)
-      grafo.conecta(v.nome, str(row) + "." + str(col-1))
+      ar = grafo.conecta(v.nome, str(row) + "." + str(col-1))
+      ar.setPeso(1)
     if checkValue(row, col+1):
       if not grafo.verticeExiste(str(row) + "." + str(col+1)):
         adicionaVertice(row, col+1)
-      grafo.conecta(v.nome, str(row) + "." + str(col+1))
+      ar = grafo.conecta(v.nome, str(row) + "." + str(col+1))
+      ar.setPeso(1)
     if checkValue(row-1, col):
       if not grafo.verticeExiste(str(row-1) + "." + str(col)):
         adicionaVertice(row-1, col)
-      grafo.conecta(v.nome, str(row-1) + "." + str(col))
+      ar = grafo.conecta(v.nome, str(row-1) + "." + str(col))
+      ar.setPeso(1)
     if checkValue(row+1, col):
       if not grafo.verticeExiste(str(row+1) + "." + str(col)):
         adicionaVertice(row+1, col)
-      grafo.conecta(v.nome, str(row+1) + "." + str(col))
+      ar = grafo.conecta(v.nome, str(row+1) + "." + str(col))
+      ar.setPeso(1)
 
 
+print(grafo.shortestPath("0.0", "6.5"))
 # Transforma grafo em uma MST
-grafo.arvore()
+# grafo.arvore()
 
-# Checa se é uma árvore
-print(grafo.isArvore())
+# # Checa se é uma árvore
+# print(grafo.isArvore())
 
-print(grafo.maxDepth("0.0"))
+# print(grafo.maxDepth("0.0"))
 
-b = Busca(grafo, matrix.shape[0])
-b.buscaProfundidade(grafo.maxDepth("0.0"))
-# b.buscaLargura("0.0")
+# b = Busca(grafo, matrix.shape[0])
+# b.buscaProfundidade(grafo.maxDepth("0.0"))
+# # b.buscaLargura("0.0")
 
-print(b._movimento)
-print(b._ouroEncontrado)
-print(b._pontuacao)
-print(len(b._movimento))
+# print(b._movimento)
+# print(b._ouroEncontrado)
+# print(b._pontuacao)
+# print(len(b._movimento))
 
 # b.limpar()

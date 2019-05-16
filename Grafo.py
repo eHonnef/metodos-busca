@@ -68,12 +68,15 @@ class Grafo:
 	# Parametro v1: eh o nome do vertice 2
 	def conecta(self, v0, v1):
 		add = True
+		ar = 0
 		for a in self.arestas:
 			if v0 in a.vs and v1 in a.vs:
 				add = False
+				ar = a
 				break
 
 		if add:
+			ar = Aresta(v0, v1)
 			self.arestas.append(Aresta(v0, v1))
 
 		if v1 not in self.grafo[v0].adjacentes:
@@ -82,7 +85,14 @@ class Grafo:
 		if v0 not in self.grafo[v1].adjacentes:
 			self.grafo[v1].adjacentes.append(v0)
 
-		return True
+		return ar
+
+	def getAresta(self, v0, v1):
+		for a in self.arestas:
+			if v0 in a.vs and v1 in a.vs:
+				return a
+		
+		return None
 
 	# Desconecta dois vertices dado os nomes
 	# Parametro v1: eh o nome do vertice 1
@@ -178,7 +188,56 @@ class Grafo:
 				return True
 		
 		return False
-		
+	
+	def _minDist(self, dist, Q):
+		mini = len(self.grafo) * 200
+		vertex = ""
+		for v in Q:
+			if dist[v] < mini:
+				mini = dist[v]
+				vertex = v
+		return vertex
+
+	# Buscar caminho usando bfs
+	def shortestPath(self, source, dest):
+		path = self._shortestPath(source, dest)
+		self.limpaVertices()
+
+		rtn = [dest]
+		p = path[dest]
+		rtn.append(p)
+		q = ""
+
+		while path:
+			#GAMBIARRA
+			try:
+				q = p
+				rtn.append(path[p])
+				p = path[p]
+				del path[q]
+			except:
+				break
+
+		rtn.reverse()
+		return rtn
+
+	def _shortestPath(self, source, dest):
+		S = [source]
+		path = {}
+		self.grafo[source].visitado = True
+		while S:
+			v = S[0]
+			S.remove(v)
+
+			if v == dest:
+				return path
+			
+			for adj in self.adjacentes(v):
+				if not self.grafo[adj].visitado:
+					self.grafo[adj].visitado = True
+					S.append(adj)
+					path[adj] = v
+
 
 	# Verifica se o grafo eh uma arvore
 	def isArvore(self):
