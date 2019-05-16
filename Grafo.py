@@ -200,6 +200,9 @@ class Grafo:
 
 	# Buscar caminho usando bfs
 	def shortestPath(self, source, dest):
+		if source == dest:
+			return []
+
 		self.limpaVertices()
 		path = self._shortestPath(source, dest)
 		self.limpaVertices()

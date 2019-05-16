@@ -28,8 +28,11 @@ class Busca:
     if self._grafo.vertice(v).dados["conteudo"] == 2:
       self._pontuacao += 5 * int(self._size**1.5)
       self._nOuro -= 1
-      self._ouroEncontrado.append(str(self._grafo.vertice(v).dados["row"]) + "." + str(self._grafo.vertice(v).dados["col"]))
-      self._movimento.append("PO->" + str(self._grafo.vertice(v).dados["row"]) + "." + str(self._grafo.vertice(v).dados["col"]))
+      self._ouroEncontrado.append(v)
+      self._movimento.append("PO->" + v)
+
+      for w in self._grafo.nomeVertices():
+        del self._grafo.vertice(w).dados["linhaReta"][v]
 
     return self._nOuro == 0
   
@@ -72,7 +75,7 @@ class Busca:
   # -1 significa que é sem limite
   def _buscaProfundidade(self, v, limite = -1, d = 1):
     if self._pontuacao == 0:
-     return "Morto"
+      return "Morto"
 
     # para nao ficar escrevendo self._grafo toda hora
     g = self._grafo
@@ -129,3 +132,38 @@ class Busca:
           self.realizaMovimentoIda(v, w)
           self.realizaMovimentoVolta(v, w)
 
+  def linhaReta(self, ouro):
+    g = self._grafo
+    for v in g.vertices():
+      for o in ouro:
+        v.dados["linhaReta"][o] = len(g.shortestPath(v.nome, o)) - 1
+
+
+  def bestFirst(self, v):
+    if self._pontuacao == 0:
+      return "Morto"
+
+    g = self._grafo
+
+    if not self.checkOuro(v):
+      adjacentes = [v for v in g.adjacentes(v)]
+      w = ""
+      minimal = g.ordem()
+      for adj in adjacentes:
+        if minimal > min(g.vertice(adj).dados["linhaReta"].values()):
+          minimal = min(g.vertice(adj).dados["linhaReta"].values())
+          w = adj
+      
+      self.realizaMovimentoIda(v, w)
+      self.bestFirst(w)
+    else:
+      s = g.shortestPath(v, "0.0")
+      a = v
+      for u in s:
+        self.realizaMovimentoVolta(u, a)
+        a = u
+
+
+  def Astar(self):
+    # considerar todas as distancias na soma
+    pass

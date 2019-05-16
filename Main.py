@@ -34,6 +34,8 @@ def checkValue(row, col):
 
 
 grafo = Grafo()
+# Salva os nodos que contem o ouro para a heuristica
+ouro = list()
 
 def adicionaVertice(row, col):
   # 0 = livre
@@ -48,10 +50,12 @@ def adicionaVertice(row, col):
     value = 1
     return None
   else:
+    if str(row) + "." + str(col) not in ouro:
+      ouro.append(str(row) + "." + str(col))
     value = 2
   
   if not grafo.verticeExiste(str(row) + "." + str(col)):
-    v = Vertice(str(row) + "." + str(col), {"conteudo":value, "row":row, "col":col})
+    v = Vertice(str(row) + "." + str(col), {"conteudo":value, "row":row, "col":col, "linhaReta":dict()})
     grafo.adicionaVertice(v)
     return v
   else:
@@ -85,7 +89,6 @@ for row in range(matrix.shape[0]):
       ar = grafo.conecta(v.nome, str(row+1) + "." + str(col))
       ar.setPeso(1)
 
-
 # print(grafo.shortestPath("0.0", "6.5"))
 # Transforma grafo em uma MST
 
@@ -95,8 +98,11 @@ for row in range(matrix.shape[0]):
 # print(grafo.maxDepth("0.0"))
 
 b = Busca(grafo, matrix.shape[0])
+b.linhaReta(ouro)
+b.bestFirst("0.0")
 # b.buscaProfundidade(grafo.maxDepth("0.0"))
-b.buscaLargura("0.0")
+# b.buscaProfundidade(-1)
+# b.buscaLargura("0.0")
 
 print(b._movimento)
 print(b._ouroEncontrado)
