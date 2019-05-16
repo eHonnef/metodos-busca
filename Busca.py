@@ -3,27 +3,28 @@ import random
 import pandas as pd
 import numpy as np
 
+
 class Busca:
 
   def __init__(self, grafo, size):
     if not isinstance(grafo, Grafo.Grafo):
       raise ValueError("O grafo não é uma instância de Grafo.")
-    
+
     self._grafo = grafo
     self._size = size
     self.limpar()
-  
+
   def limpar(self):
     self._grafo.limpaVertices()
     self._pontuacao = int(self._size**1.5)
-    self._nOuro = int(self._size/2)
+    self._nOuro = int(self._size / 2)
     self._movimento = list()
     self._ouroEncontrado = list()
 
   def voltarInicio(self):
     # Se todos os vertices estao marcados ele nao visita mais na call recursiva
     self._grafo.marcarTodosVertices()
-  
+
   def checkOuro(self, v):
     if self._grafo.vertice(v).dados["conteudo"] == 2:
       self._pontuacao += 5 * int(self._size**1.5)
@@ -36,34 +37,57 @@ class Busca:
           del self._grafo.vertice(w).dados["linhaReta"][v]
 
     return self._nOuro == 0
-  
+
   def realizaMovimentoIda(self, vFrom, vTo):
     self._pontuacao -= 1
 
-    if self._grafo.vertice(vTo).dados["row"] > self._grafo.vertice(vFrom).dados["row"]:
-      self._movimento.append("B->" + str(self._grafo.vertice(vTo).dados["row"]) + "." + str(self._grafo.vertice(vTo).dados["col"]))
-    elif self._grafo.vertice(vTo).dados["row"] < self._grafo.vertice(vFrom).dados["row"]:
-      self._movimento.append("C->" + str(self._grafo.vertice(vTo).dados["row"]) + "." + str(self._grafo.vertice(vTo).dados["col"]))
+    if self._grafo.vertice(vTo).dados["row"] > self._grafo.vertice(
+        vFrom).dados["row"]:
+      self._movimento.append("B->" +
+                             str(self._grafo.vertice(vTo).dados["row"]) + "." +
+                             str(self._grafo.vertice(vTo).dados["col"]))
+    elif self._grafo.vertice(vTo).dados["row"] < self._grafo.vertice(
+        vFrom).dados["row"]:
+      self._movimento.append("C->" +
+                             str(self._grafo.vertice(vTo).dados["row"]) + "." +
+                             str(self._grafo.vertice(vTo).dados["col"]))
       # self._movimento.append("C")
-    elif self._grafo.vertice(vTo).dados["col"] > self._grafo.vertice(vFrom).dados["col"]:
-      self._movimento.append("D->" + str(self._grafo.vertice(vTo).dados["row"]) + "." + str(self._grafo.vertice(vTo).dados["col"]))
+    elif self._grafo.vertice(vTo).dados["col"] > self._grafo.vertice(
+        vFrom).dados["col"]:
+      self._movimento.append("D->" +
+                             str(self._grafo.vertice(vTo).dados["row"]) + "." +
+                             str(self._grafo.vertice(vTo).dados["col"]))
       # self._movimento.append("D")
-    elif self._grafo.vertice(vTo).dados["col"] < self._grafo.vertice(vFrom).dados["col"]:
-      self._movimento.append("E->" + str(self._grafo.vertice(vTo).dados["row"]) + "." + str(self._grafo.vertice(vTo).dados["col"]))
+    elif self._grafo.vertice(vTo).dados["col"] < self._grafo.vertice(
+        vFrom).dados["col"]:
+      self._movimento.append("E->" +
+                             str(self._grafo.vertice(vTo).dados["row"]) + "." +
+                             str(self._grafo.vertice(vTo).dados["col"]))
       # self._movimento.append("E")
 
-
   def realizaMovimentoVolta(self, vFrom, vTo):
-    if self._grafo.vertice(vTo).dados["row"] > self._grafo.vertice(vFrom).dados["row"]:
-      self._movimento.append("C->" + str(self._grafo.vertice(vFrom).dados["row"]) + "." + str(self._grafo.vertice(vFrom).dados["col"]))
-    elif self._grafo.vertice(vTo).dados["row"] < self._grafo.vertice(vFrom).dados["row"]:
-      self._movimento.append("B->" + str(self._grafo.vertice(vFrom).dados["row"]) + "." + str(self._grafo.vertice(vFrom).dados["col"]))
+    if self._grafo.vertice(vTo).dados["row"] > self._grafo.vertice(
+        vFrom).dados["row"]:
+      self._movimento.append("C->" +
+                             str(self._grafo.vertice(vFrom).dados["row"]) +
+                             "." + str(self._grafo.vertice(vFrom).dados["col"]))
+    elif self._grafo.vertice(vTo).dados["row"] < self._grafo.vertice(
+        vFrom).dados["row"]:
+      self._movimento.append("B->" +
+                             str(self._grafo.vertice(vFrom).dados["row"]) +
+                             "." + str(self._grafo.vertice(vFrom).dados["col"]))
       # self._movimento.append("C")
-    elif self._grafo.vertice(vTo).dados["col"] > self._grafo.vertice(vFrom).dados["col"]:
-      self._movimento.append("E->" + str(self._grafo.vertice(vFrom).dados["row"]) + "." + str(self._grafo.vertice(vFrom).dados["col"]))
+    elif self._grafo.vertice(vTo).dados["col"] > self._grafo.vertice(
+        vFrom).dados["col"]:
+      self._movimento.append("E->" +
+                             str(self._grafo.vertice(vFrom).dados["row"]) +
+                             "." + str(self._grafo.vertice(vFrom).dados["col"]))
       # self._movimento.append("D")
-    elif self._grafo.vertice(vTo).dados["col"] < self._grafo.vertice(vFrom).dados["col"]:
-      self._movimento.append("D->" + str(self._grafo.vertice(vFrom).dados["row"]) + "." + str(self._grafo.vertice(vFrom).dados["col"]))
+    elif self._grafo.vertice(vTo).dados["col"] < self._grafo.vertice(
+        vFrom).dados["col"]:
+      self._movimento.append("D->" +
+                             str(self._grafo.vertice(vFrom).dados["row"]) +
+                             "." + str(self._grafo.vertice(vFrom).dados["col"]))
       # self._movimento.append("E")
 
     self._pontuacao -= 1
@@ -73,11 +97,11 @@ class Busca:
     self._grafo.limpaVertices()
 
   def buscaProfundidade(self, limite):
-    self._buscaProfundidade("0.0", limite = limite)
+    self._buscaProfundidade("0.0", limite=limite)
     self._grafo.limpaVertices()
-  
+
   # -1 significa que é sem limite
-  def _buscaProfundidade(self, v, limite = -1, d = 1):
+  def _buscaProfundidade(self, v, limite=-1, d=1):
     if self._pontuacao == 0:
       return "Morto"
 
@@ -104,7 +128,7 @@ class Busca:
 
   def buscaLargura(self, start_v):
     g = self._grafo
-    
+
     queue = list()
     queue.append(start_v)
     g.visitarVertice(start_v)
@@ -120,7 +144,7 @@ class Busca:
       vOld = v
       v = queue.pop(0)
       self.realizaMovimentoIda(vOld, v)
-      
+
       if self.checkOuro(v):
         s = g.shortestPath(v, "0.0")
         a = v
@@ -142,32 +166,43 @@ class Busca:
       for o in ouro:
         v.dados["linhaReta"][o] = len(g.shortestPath(v.nome, o)) - 1
 
+  def hLinhaReta(self, w, adj):
+    return min(self._grafo.vertice(w).dados["linhaReta"].values()) > min(
+        self._grafo.vertice(adj).dados["linhaReta"].values())
+
+  def hAll(self, w, adj):
+    return sum(self._grafo.vertice(w).dados["linhaReta"].values()) >= sum(
+        self._grafo.vertice(adj).dados["linhaReta"].values())
+
+  # Selecionando o nodo de acordo com uma heuristica
+  def sVertice(self, v, h):
+    w = v
+    for adj in self._grafo.adjacentes(v):
+      if h(w, adj):
+        w = adj
+
+    return w
 
   def bestFirst(self, v):
+    self._bestFirst(v, self.hLinhaReta)
+
+  def Astar(self, v):
+    self._bestFirst(v, self.hAll)
+
+  def _bestFirst(self, v, h):
     if self._pontuacao == 0:
       return "Morto"
 
     g = self._grafo
 
     if not self.checkOuro(v):
-      adjacentes = [v for v in g.adjacentes(v)]
-      w = ""
-      minimal = g.ordem()
-      for adj in adjacentes:
-        if minimal > min(g.vertice(adj).dados["linhaReta"].values()):
-          minimal = min(g.vertice(adj).dados["linhaReta"].values())
-          w = adj
-      
+      w = self.sVertice(v, h)
+
       self.realizaMovimentoIda(v, w)
-      self.bestFirst(w)
+      self._bestFirst(w, h)
     else:
       s = g.shortestPath(v, "0.0")
       a = v
       for u in s:
         self.realizaMovimentoVolta(u, a)
         a = u
-
-
-  def Astar(self):
-    # considerar todas as distancias na soma
-    pass
