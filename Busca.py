@@ -171,8 +171,13 @@ class Busca:
         self._grafo.vertice(adj).dados["linhaReta"].values())
 
   def hAll(self, w, adj):
-    return sum(self._grafo.vertice(w).dados["linhaReta"].values()) > sum(
-        self._grafo.vertice(adj).dados["linhaReta"].values())
+    if min(self._grafo.vertice(w).dados["linhaReta"].values()) > min(
+        self._grafo.vertice(adj).dados["linhaReta"].values()):
+        return True
+    elif min(self._grafo.vertice(w).dados["linhaReta"].values()) == min(
+        self._grafo.vertice(adj).dados["linhaReta"].values()):
+      return sum(self._grafo.vertice(w).dados["linhaReta"].values()) > sum(
+          self._grafo.vertice(adj).dados["linhaReta"].values())
 
   # Selecionando o nodo de acordo com uma heuristica
   def sVertice(self, v, h):

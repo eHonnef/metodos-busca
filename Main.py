@@ -7,7 +7,7 @@ from Busca import Busca
 
 # Criando o grafo e arestas
 file = pd.read_csv(
-    "entrada8.txt", skiprows=1, delimiter='\t', header=None).applymap(str)
+    "entrada32.txt", skiprows=1, delimiter='\t', header=None).applymap(str)
 
 # matrixSize = int(file.readline(1).strip())
 
