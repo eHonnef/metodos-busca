@@ -160,13 +160,13 @@ class Busca:
           self.realizaMovimentoIda(v, w)
           self.realizaMovimentoVolta(v, w)
 
-  def linhaReta(self, ouro):
+  def manh(self, ouro):
     g = self._grafo
     for v in g.vertices():
       for o in ouro:
         v.dados["linhaReta"][o] = len(g.shortestPath(v.nome, o)) - 1
 
-  def hLinhaReta(self, w, adj):
+  def hManh(self, w, adj):
     return min(self._grafo.vertice(w).dados["linhaReta"].values()) > min(
         self._grafo.vertice(adj).dados["linhaReta"].values())
 
@@ -189,7 +189,7 @@ class Busca:
     return w
 
   def bestFirst(self, v):
-    self._bestFirst(v, self.hLinhaReta)
+    self._bestFirst(v, self.hManh)
 
   def Astar(self, v):
     self._bestFirst(v, self.hAll)

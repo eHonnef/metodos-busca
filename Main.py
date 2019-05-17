@@ -7,7 +7,7 @@ from Busca import Busca
 
 # Criando o grafo e arestas
 file = pd.read_csv(
-    "entrada32.txt", skiprows=1, delimiter='\t', header=None).applymap(str)
+    "entrada8.txt", skiprows=1, delimiter='\t', header=None).applymap(str)
 
 # matrixSize = int(file.readline(1).strip())
 
@@ -109,15 +109,20 @@ def busca(busca, metodo):
   print(len(busca._movimento))
   grafo.restaurarGrafo()
   busca.limpar()
+  busca.manh(ouro)
 
 
 print("Ouro:")
 print(ouro)
 print("\n\n")
 b = Busca(grafo, matrix.shape[0])
-b.linhaReta(ouro)
-# busca(b, b.bestFirst)
+b.manh(ouro)
+print("A*:")
 busca(b, b.Astar)
-# busca(b, b.BuscaProfundidade)
-# busca(b, b.buscaLargura)
+print("\n\nBest-First:")
+busca(b, b.bestFirst)
+print("\n\nDFS:")
+busca(b, b.BuscaProfundidade)
+print("\n\nBFS:")
+busca(b, b.buscaLargura)
 
